@@ -6,10 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.simran.naukriMitra.entity.Users;
 import com.simran.naukriMitra.entity.UsersType;
 import com.simran.naukriMitra.services.UsersTypeService;
+
+import jakarta.validation.Valid;
 
 @Controller
 public class UsersController {
@@ -28,6 +31,12 @@ public class UsersController {
 		model.addAttribute("getAllTypes", usersTypes);
 		model.addAttribute("user", new Users());
 		return "register";
+	}
+	
+	@PostMapping("/register/new")
+	public String userRegistration(@Valid Users users) {
+		System.out.println("User:: " +users);
+		return "dashboard";
 	}
 	
 }
