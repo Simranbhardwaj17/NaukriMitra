@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.simran.naukriMitra.entity.Users;
 import com.simran.naukriMitra.entity.UsersType;
+import com.simran.naukriMitra.services.UsersService;
+
 import com.simran.naukriMitra.services.UsersTypeService;
 
 import jakarta.validation.Valid;
@@ -18,10 +20,12 @@ import jakarta.validation.Valid;
 public class UsersController {
 	
 	private final UsersTypeService usersTypeService;
+	private final UsersService usersService;
 
 	@Autowired
-	public UsersController(UsersTypeService usersTypeService) {
+	public UsersController(UsersTypeService usersTypeService, UsersService usersService) {
 		this.usersTypeService = usersTypeService;
+		this.usersService = usersService;
 	}
 	
 	@GetMapping("/register")
@@ -35,7 +39,8 @@ public class UsersController {
 	
 	@PostMapping("/register/new")
 	public String userRegistration(@Valid Users users) {
-		System.out.println("User:: " +users);
+//		System.out.println("User:: " +users);
+		usersService.addNew(users);
 		return "dashboard";
 	}
 	
