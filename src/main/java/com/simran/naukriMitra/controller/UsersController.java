@@ -1,6 +1,7 @@
 package com.simran.naukriMitra.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import com.simran.naukriMitra.services.UsersService;
 import com.simran.naukriMitra.services.UsersTypeService;
 
 import jakarta.validation.Valid;
+
 
 @Controller
 public class UsersController {
@@ -38,7 +40,19 @@ public class UsersController {
 	}
 	
 	@PostMapping("/register/new")
-	public String userRegistration(@Valid Users users) {
+	public String userRegistration(@Valid Users users, Model model) {
+		
+		Optional<Users> optionalUsers = usersService.getUserByEmail(users.getEmail());
+		
+		if(optionalUsers.isPresent())
+		{
+			model.addAttribute("error", "Email already registered, try to login or register with other email.");  //if the email exists, add error message to model and return registration form
+			List<UsersType> usersTypes = usersTypeService.getAll();
+			model.addAttribute("getAllTypes", usersTypes);
+			model.addAttribute("user", new Users());
+			return "register";
+		}
+		
 //		System.out.println("User:: " +users);
 		usersService.addNew(users);
 		return "dashboard";
