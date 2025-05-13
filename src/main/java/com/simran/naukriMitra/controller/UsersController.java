@@ -60,7 +60,7 @@ public class UsersController {
 		
 //		System.out.println("User:: " +users);
 		usersService.addNew(users);
-		return "dashboard";
+		return "redirect:/dashboard/";
 	}
 	
 	@GetMapping("/login")
