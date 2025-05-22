@@ -10,7 +10,7 @@ public class JobLocation {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private String id;
+	private Integer id;
 	
 	private String city;
 	private String state;
@@ -19,18 +19,18 @@ public class JobLocation {
 	public JobLocation() {
 	}
 
-	public JobLocation(String id, String city, String state, String country) {
+	public JobLocation(Integer id, String city, String state, String country) {
 		this.id = id;
 		this.city = city;
 		this.state = state;
 		this.country = country;
 	}
 
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
