@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.simran.naukriMitra.entity.JobPostActivity;
+import com.simran.naukriMitra.entity.Users;
 import com.simran.naukriMitra.services.UsersService;
 
 @Controller
@@ -32,7 +34,21 @@ public class JobPostActivityController {
 		}
 		
 		model.addAttribute("user", currentUserProfile);
+		System.out.println("Dashboard");		
 		return "dashboard";
+	}
+	
+	@GetMapping("/dashboard/add")
+	public String addJobs(Model model) {  //new mthd for showing form
+		model.addAttribute("jobPostActivity", new JobPostActivity());
+		model.addAttribute("user", usersService.getCurrentUserProfile());
+		return "add-jobs";
+	}
+	
+	@GetMapping("/dashboard/addNew")
+	public String addNew(JobPostActivity jobPostActivity, Model model) {
 		
+		Users user = usersService.getCurrentUser();
+		return "redirect:/dashboard/";
 	}
 }
