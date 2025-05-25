@@ -38,7 +38,7 @@ public class UsersService {
 	public Users addNew(Users users) {
 		users.setActive(true);
 		users.setRegistrationDate(new Date(System.currentTimeMillis()));
-		users.setPassword(passwordEncoder.encode(users.getPassword()));;
+		users.setPassword(passwordEncoder.encode(users.getPassword()));
 		Users savedUser = usersRepository.save(users);
 		int userTypeId = users.getUserTypeId().getUserTypeId();
 		if (userTypeId == 1) {
@@ -70,6 +70,18 @@ public class UsersService {
 				JobSeekerProfile jobSeekerProfile = jobSeekerProfileRepository.findById(userId).orElse(new JobSeekerProfile());
 				return jobSeekerProfile;
 			}
+		}
+		return null;
+	}
+	
+	public Users getCurrentUser() {
+		
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		
+		if (!(authentication instanceof AnonymousAuthenticationToken)) {
+			String username = authentication.getName();
+			Users user = usersRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("Coud not found " + "user"));
+			return user;
 		}
 		return null;
 	}
