@@ -1,10 +1,12 @@
 package com.simran.naukriMitra.controller;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.simran.naukriMitra.entity.JobPostActivity;
+import com.simran.naukriMitra.entity.RecruiterJobsDto;
+import com.simran.naukriMitra.entity.RecruiterProfile;
 import com.simran.naukriMitra.entity.Users;
 import com.simran.naukriMitra.services.JobPostActivityService;
 import com.simran.naukriMitra.services.UsersService;
@@ -38,6 +42,10 @@ public class JobPostActivityController {
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {
 			String currentUsername = authentication.getName();
 			model.addAttribute("username", currentUsername);
+			if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("Recruiter"))) {
+				List<RecruiterJobsDto> recruiterJobs = jobPostActivityService.getRecruiterJobs(((RecruiterProfile) currentUserProfile).getUserAccountId());
+				model.addAttribute("jobPost", recruiterJobs);
+			}
 		}
 		
 		model.addAttribute("user", currentUserProfile);
