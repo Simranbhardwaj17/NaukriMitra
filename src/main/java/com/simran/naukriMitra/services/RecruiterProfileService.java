@@ -11,15 +11,15 @@ import com.simran.naukriMitra.repository.RecruiterProfileRepository;
 @Service
 public class RecruiterProfileService {
 
-	private final RecruiterProfileRepository recruiterProfileRepository;
+	private final RecruiterProfileRepository recruiterRepository;
 
 	@Autowired
-	public RecruiterProfileService(RecruiterProfileRepository recruiterProfileRepository) {
-		this.recruiterProfileRepository = recruiterProfileRepository;
+	public RecruiterProfileService(RecruiterProfileRepository recruiterRepository) {
+		this.recruiterRepository = recruiterRepository;
 	}
 
 	public Optional<RecruiterProfile> getOne(Integer id) {
-		return recruiterProfileRepository.findById(id);
+		return recruiterRepository.findById(id);
 	}
 
 	public RecruiterProfile addNew(RecruiterProfile recruiterProfile) {

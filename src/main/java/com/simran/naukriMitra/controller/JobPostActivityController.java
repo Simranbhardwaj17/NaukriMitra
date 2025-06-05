@@ -45,12 +45,12 @@ public class JobPostActivityController {
 			model.addAttribute("username", currentUsername);
 			if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("Recruiter"))) {
 				List<RecruiterJobsDto> recruiterJobs = jobPostActivityService.getRecruiterJobs(((RecruiterProfile) currentUserProfile).getUserAccountId());
-				model.addAttribute("jobPost", recruiterJobs);
+                model.addAttribute("jobPost", recruiterJobs);
 			}
 		}
 		
 		model.addAttribute("user", currentUserProfile);
-		System.out.println("Dashboard");		
+//		System.out.println("Dashboard");		
 		return "dashboard";
 	}
 	
