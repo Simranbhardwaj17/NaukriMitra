@@ -14,8 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-
-import com.simran.naukriMitra.entity.RecruiterProfile;
 import com.simran.naukriMitra.entity.Skills;
 import com.simran.naukriMitra.entity.Users;
 import com.simran.naukriMitra.repository.UsersRepository;
@@ -41,11 +39,25 @@ public class JobSeekerProfileController {
 		
 		JobSeekerProfile jobSeekerProfile = new JobSeekerProfile();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		List<Skills> skills = new ArrayList();
+		List<Skills> skills = new ArrayList<>();
 		
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {
 			Users user = usersRepository.findByEmail(authentication.getName()).orElseThrow(() -> new UsernameNotFoundException("User not found"));  //give actual user from DB
+			Optional<JobSeekerProfile> seekerProfile = jobSeekerProfileService.getOne(user.getUserId());
+			if (seekerProfile.isPresent()) {
+				jobSeekerProfile = seekerProfile.get();
+				if (jobSeekerProfile.getSkills().isEmpty()) {
+					skills.add(new Skills());
+					jobSeekerProfile.setSkills(skills);
+					
+				}
+			}
+			
+			model.addAttribute("skills", skills);
+			model.addAttribute("profile", jobSeekerProfile);
+			
 		}	
+		
 		return "job-seeker-profile";   //connect to html
 	}
 }
