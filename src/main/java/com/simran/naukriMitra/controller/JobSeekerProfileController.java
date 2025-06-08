@@ -1,7 +1,9 @@
 package com.simran.naukriMitra.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +24,7 @@ import com.simran.naukriMitra.entity.Skills;
 import com.simran.naukriMitra.entity.Users;
 import com.simran.naukriMitra.repository.UsersRepository;
 import com.simran.naukriMitra.services.JobSeekerProfileService;
+import com.simran.naukriMitra.util.FileUploadUtil;
 import com.simran.naukriMitra.entity.JobSeekerProfile;
 
 @Controller
@@ -81,6 +85,42 @@ public class JobSeekerProfileController {
 		List<Skills> skillsList = new ArrayList<>();
 		model.addAttribute("profile", jobSeekerProfile);
 		model.addAttribute("skills", skillsList);
+		
+		for (Skills skills : jobSeekerProfile.getSkills()) {
+			skills.setJobSeekerProfile(jobSeekerProfile);
+		}
+		
+		String imageName = "";
+		String resumeName = "";
+		
+		if (!Objects.equals(image.getOriginalFilename(), "")) {
+			imageName = StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
+			jobSeekerProfile.setProfilePhoto(imageName);
+		}
+		
+		if (!Objects.equals(pdf.getOriginalFilename(), "")) {
+			resumeName = StringUtils.cleanPath(Objects.requireNonNull(pdf.getOriginalFilename()));
+			jobSeekerProfile.setResume(resumeName);
+		}
+		
+		//Its just in memory, to save these in DB use service
+		JobSeekerProfile seekerProfile = jobSeekerProfileService.addNew(jobSeekerProfile);
+		
+		//these save the file into filesystem
+		try {
+			String uploadDir = "photos/candidate/" + jobSeekerProfile.getUserAccountId();
+			
+			if (!Objects.equals(image.getOriginalFilename(), "")) {
+				FileUploadUtil.saveFile(uploadDir, imageName, image);
+			}
+			
+			if (!Objects.equals(pdf.getOriginalFilename(), "")) {
+				FileUploadUtil.saveFile(uploadDir, resumeName, pdf);
+			}
+			
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
 		
 		return "redirect:/dashboard/";
 	}
