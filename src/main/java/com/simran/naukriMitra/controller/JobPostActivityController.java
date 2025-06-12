@@ -20,23 +20,27 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.simran.naukriMitra.entity.JobPostActivity;
+import com.simran.naukriMitra.entity.JobSeekerApply;
+import com.simran.naukriMitra.entity.JobSeekerProfile;
 import com.simran.naukriMitra.entity.RecruiterJobsDto;
 import com.simran.naukriMitra.entity.RecruiterProfile;
 import com.simran.naukriMitra.entity.Users;
 import com.simran.naukriMitra.services.JobPostActivityService;
+import com.simran.naukriMitra.services.JobSeekerApplyService;
 import com.simran.naukriMitra.services.UsersService;
 
 @Controller
 public class JobPostActivityController {
 	
 	private final UsersService usersService;
-	
 	private final JobPostActivityService jobPostActivityService;
+	private final JobSeekerApplyService jobSeekerApplyService;
 
 	@Autowired
-	public JobPostActivityController(UsersService usersService, JobPostActivityService jobPostActivityService) {
+	public JobPostActivityController(UsersService usersService, JobPostActivityService jobPostActivityService, JobSeekerApplyService jobSeekerApplyService) {
 		this.usersService = usersService;
 		this.jobPostActivityService = jobPostActivityService;
+		this.jobSeekerApplyService = jobSeekerApplyService;
 	}
 	
 	@GetMapping("/dashboard/")
@@ -118,6 +122,8 @@ public class JobPostActivityController {
 			if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("Recruiter"))) {
 				List<RecruiterJobsDto> recruiterJobs = jobPostActivityService.getRecruiterJobs(((RecruiterProfile) currentUserProfile).getUserAccountId());
                 model.addAttribute("jobPost", recruiterJobs);
+			} else {
+				List<JobSeekerApply> jobSeekerApplyList = jobSeekerApplyService.getCandidatesJobs((JobSeekerProfile) currentUserProfile);
 			}
 		}
 		
