@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.simran.naukriMitra.entity.JobPostActivity;
 import com.simran.naukriMitra.entity.JobSeekerApply;
 import com.simran.naukriMitra.entity.JobSeekerProfile;
+import com.simran.naukriMitra.entity.JobSeekerSave;
 import com.simran.naukriMitra.entity.RecruiterJobsDto;
 import com.simran.naukriMitra.entity.RecruiterProfile;
 import com.simran.naukriMitra.entity.Users;
@@ -35,6 +36,7 @@ public class JobPostActivityController {
 	private final UsersService usersService;
 	private final JobPostActivityService jobPostActivityService;
 	private final JobSeekerApplyService jobSeekerApplyService;
+	private final JobSeekerSaveService JobSeekerSaveService;
 
 	@Autowired
 	public JobPostActivityController(UsersService usersService, JobPostActivityService jobPostActivityService, JobSeekerApplyService jobSeekerApplyService) {
@@ -124,6 +126,41 @@ public class JobPostActivityController {
                 model.addAttribute("jobPost", recruiterJobs);
 			} else {
 				List<JobSeekerApply> jobSeekerApplyList = jobSeekerApplyService.getCandidatesJobs((JobSeekerProfile) currentUserProfile);
+				List<JobSeekerSave> jobSeekerSaveList = jobSeekerSaveService.getCandidatesJob((JobSeekerProfile) currentUserProfile);
+				
+				boolean exist;
+				boolean saved;
+				
+				//loop to see jobApplied for or save for past
+				for (JobPostActivity jobActivity : jobPost) {
+                    exist = false;
+                    saved = false;
+                    for (JobSeekerApply jobSeekerApply : jobSeekerApplyList) {
+                        if (Objects.equals(jobActivity.getJobPostId(), jobSeekerApply.getJob().getJobPostId())) {
+                            jobActivity.setIsActive(true);
+                            exist = true;
+                            break;
+                        }
+                    }
+
+                    for (JobSeekerSave jobSeekerSave : jobSeekerSaveList) {
+                        if (Objects.equals(jobActivity.getJobPostId(), jobSeekerSave.getJob().getJobPostId())) {
+                            jobActivity.setIsSaved(true);
+                            saved = true;
+                            break;
+                        }
+                    }
+
+                    if (!exist) {
+                        jobActivity.setIsActive(false);
+                    }
+                    if (!saved) {
+                        jobActivity.setIsSaved(false);
+                    }
+
+                    model.addAttribute("jobPost", jobPost);
+
+                }
 			}
 		}
 		
