@@ -1,6 +1,8 @@
 package com.simran.naukriMitra.controller;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -11,12 +13,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.simran.naukriMitra.entity.JobPostActivity;
 import com.simran.naukriMitra.entity.JobSeekerApply;
 import com.simran.naukriMitra.entity.JobSeekerProfile;
 import com.simran.naukriMitra.entity.JobSeekerSave;
 import com.simran.naukriMitra.entity.RecruiterProfile;
+import com.simran.naukriMitra.entity.Users;
 import com.simran.naukriMitra.services.JobPostActivityService;
 import com.simran.naukriMitra.services.JobSeekerApplyService;
 import com.simran.naukriMitra.services.JobSeekerProfileService;
@@ -88,4 +92,26 @@ public class JobSeekerApplyController {
 		model.addAttribute("user", usersService.getCurrentUserProfile());
 		return "job-details";
 	}
+	
+	@PostMapping("job-details/apply/{id}")
+    public String apply(@PathVariable("id") int id, JobSeekerApply jobSeekerApply) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            String currentUsername = authentication.getName();
+            Users user = usersService.findByEmail(currentUsername);
+            Optional<JobSeekerProfile> seekerProfile = jobSeekerProfileService.getOne(user.getUserId());
+            JobPostActivity jobPostActivity = jobPostActivityService.getOne(id);
+            if (seekerProfile.isPresent() && jobPostActivity != null) {
+                jobSeekerApply = new JobSeekerApply();
+                jobSeekerApply.setUserId(seekerProfile.get());
+                jobSeekerApply.setJob(jobPostActivity);
+                jobSeekerApply.setApplyDate(new Date());
+            } else {
+                throw new RuntimeException("User not found");
+            }
+            jobSeekerApplyService.addNew(jobSeekerApply);
+        }
+
+        return "redirect:/dashboard/";
+    }
 }
