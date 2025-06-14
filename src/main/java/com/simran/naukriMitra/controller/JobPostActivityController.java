@@ -28,6 +28,7 @@ import com.simran.naukriMitra.entity.RecruiterProfile;
 import com.simran.naukriMitra.entity.Users;
 import com.simran.naukriMitra.services.JobPostActivityService;
 import com.simran.naukriMitra.services.JobSeekerApplyService;
+import com.simran.naukriMitra.services.JobSeekerSaveService;
 import com.simran.naukriMitra.services.UsersService;
 
 @Controller
@@ -36,13 +37,14 @@ public class JobPostActivityController {
 	private final UsersService usersService;
 	private final JobPostActivityService jobPostActivityService;
 	private final JobSeekerApplyService jobSeekerApplyService;
-	private final JobSeekerSaveService JobSeekerSaveService;
+	private final JobSeekerSaveService jobSeekerSaveService;
 
 	@Autowired
-	public JobPostActivityController(UsersService usersService, JobPostActivityService jobPostActivityService, JobSeekerApplyService jobSeekerApplyService) {
+	public JobPostActivityController(UsersService usersService, JobPostActivityService jobPostActivityService, JobSeekerApplyService jobSeekerApplyService, JobSeekerSaveService jobSeekerSaveService) {
 		this.usersService = usersService;
 		this.jobPostActivityService = jobPostActivityService;
 		this.jobSeekerApplyService = jobSeekerApplyService;
+		this.jobSeekerSaveService = jobSeekerSaveService;
 	}
 	
 	@GetMapping("/dashboard/")
