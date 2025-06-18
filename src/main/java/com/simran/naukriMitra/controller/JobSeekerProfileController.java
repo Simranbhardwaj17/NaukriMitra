@@ -124,4 +124,12 @@ public class JobSeekerProfileController {
 		
 		return "redirect:/dashboard/";
 	}
+	
+	 @GetMapping("/{id}")
+	    public String candidateProfile(@PathVariable("id") int id, Model model) {
+
+	        Optional<JobSeekerProfile> seekerProfile = jobSeekerProfileService.getOne(id);
+	        model.addAttribute("profile", seekerProfile.get());
+	        return "job-seeker-profile";
+	    }
 }
