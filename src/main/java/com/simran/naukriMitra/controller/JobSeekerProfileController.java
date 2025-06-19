@@ -132,4 +132,17 @@ public class JobSeekerProfileController {
 	        model.addAttribute("profile", seekerProfile.get());
 	        return "job-seeker-profile";
 	    }
+	 
+	 @GetMapping("/downloadResume")
+	    public ResponseEntity<?> downloadResume(@RequestParam(value = "fileName") String fileName, @RequestParam(value = "userID") String userId) {
+
+	        FileDownloadUtil downloadUtil = new FileDownloadUtil();
+	        Resource resource = null;
+
+	        try {
+	            resource = downloadUtil.getFileAsResourse("photos/candidate/" + userId, fileName);
+	        } 
+
+	    }
+	 
 }
