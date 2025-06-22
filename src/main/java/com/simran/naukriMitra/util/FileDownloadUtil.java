@@ -20,4 +20,10 @@ public class FileDownloadUtil {
                 foundfile = file;
             }
         });
+        
+        if (foundfile != null) {
+            return new UrlResource(foundfile.toUri());
+        }
+        return null;
+    }
 }
